@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movies_clean_arq_flutter/features/number_trivia/data/datasources/network/MovieApiService.dart';
 
 void main() {
   runApp(MyApp());
@@ -47,6 +48,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  static const API_KEY = '7d51874568317dfd0c91db399be2bdec';
 
   void _incrementCounter() {
     setState(() {
@@ -104,10 +106,20 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: getPopularMoviesOrtv(),
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  getPopularMoviesOrtv() async {
+    var service = MovieApiService.create();
+    var responce = await service.getPopularMoviesOrTv('movie', API_KEY, 1);
+    if (responce.isSuccessful) {
+      print('Success' + responce.bodyString);
+    } else {
+      print('Error');
+    }
   }
 }

@@ -7,11 +7,11 @@ abstract class Failure extends Equatable {
 class ServerFailure extends Failure {
   final String serverFailure;
 
-  ServerFailure(this.serverFailure);
+  ServerFailure({this.serverFailure});
 }
 
 class CacheFailure extends Failure {
   final String cacheFailure;
 
-  CacheFailure(this.cacheFailure);
+  CacheFailure({this.cacheFailure});
 }
