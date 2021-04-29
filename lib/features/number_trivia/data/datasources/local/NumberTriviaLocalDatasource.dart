@@ -31,11 +31,11 @@ class NumberTriviaLocalDatasourceImpl implements NumberTriviaLocalDatasource {
 
   @override
   Future<NumberTriviaModel> getLastNumberTrivia() {
-    // final jsonString = sharedPreferences.getString(CACHED_NUMBER_TRIVIA);
-    // if (jsonString != null) {
-    //   return Future.value(NumberTriviaModel.fromJson(json.decode(jsonString)));
-    // } else {
-    //   throw CacheException();
-    // }
+    final jsonString = sharedPreferences.getString(CACHED_NUMBER_TRIVIA);
+    if (jsonString != null) {
+      return Future.value(NumberTriviaModel.fromJson(json.decode(jsonString)));
+    } else {
+      throw CacheException();
+    }
   }
 }
