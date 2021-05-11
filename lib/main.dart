@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:movies_clean_arq_flutter/features/number_trivia/data/datasources/models/moviedb/PopularMoviesEntity.dart';
 import 'package:movies_clean_arq_flutter/features/number_trivia/data/datasources/network/MovieApiService.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'MoviesDb'),
     );
   }
 }
@@ -33,52 +34,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static const API_KEY = '7d51874568317dfd0c91db399be2bdec';
-  static const IMAGE_URL = "https://image.tmdb.org/t/p/w342";
-  String imageUrl;
-  String path;
-
-  PopularMoviesEntity popularMoviesOrTv;
-  List<Result> listPopularMoviesOrTv;
-
-  @override
-  Widget build(BuildContext context) {
-    getPopularMoviesOrTv();
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
-          ),
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 30,
-                childAspectRatio: 1.8),
-            itemCount: 20, //como hago para que me coja list.lenght
-            itemBuilder: (_, int index) {
-              imageUrl = IMAGE_URL + listPopularMoviesOrTv[index].backdropPath;
-
-              return Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(imageUrl),
-                  ),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
   getPopularMoviesOrTv() async {
     var service = MovieApiService.create();
     var responce = await service.getPopularMoviesOrTv('movie', API_KEY, 1);
@@ -91,5 +46,98 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       print('Error');
     }
+  }
+
+  static const API_KEY = '7d51874568317dfd0c91db399be2bdec';
+  static const IMAGE_URL = "https://image.tmdb.org/t/p/w342";
+
+  String imageUrl;
+  String movieName;
+  String path;
+
+  PopularMoviesEntity popularMoviesOrTv = null;
+  List<Result> listPopularMoviesOrTv = [];
+  @override
+  void initState() {
+    super.initState();
+    getPopularMoviesOrTv();
+  }
+
+  @override
+  void didUpdateWidget(covariant MyHomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    getPopularMoviesOrTv();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double Height = MediaQuery.of(context).size.height;
+    final double Width = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(widget.title),
+        leading: Icon(Icons.article),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.movie),
+            label: 'Popular',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorite')
+        ],
+      ),
+      body: SafeArea(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 20,
+                childAspectRatio: (Width / 2) / (Height * 0.3)),
+            itemCount: listPopularMoviesOrTv.length,
+            itemBuilder: (_, int index) {
+              imageUrl = IMAGE_URL + listPopularMoviesOrTv[index].backdropPath;
+              movieName = listPopularMoviesOrTv[index].originalTitle;
+
+              return Stack(children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(imageUrl),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 30,
+                  right: 10,
+                  child: Center(
+                    child: Text(
+                      '$movieName',
+                      style: GoogleFonts.lato(
+                        fontSize: 15,
+                        letterSpacing: 1,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+              ]);
+            },
+          ),
+        ),
+      ),
+    );
   }
 }

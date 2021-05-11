@@ -3,9 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:movies_clean_arq_flutter/core/error/exceptions.dart';
 import 'package:movies_clean_arq_flutter/core/error/failures.dart';
 import 'package:movies_clean_arq_flutter/core/network/NetworkInfo.dart';
-import 'package:movies_clean_arq_flutter/features/number_trivia/data/datasources/local/NumberTriviaLocalDatasource.dart';
-import 'package:movies_clean_arq_flutter/features/number_trivia/data/datasources/network/NumberTriviaRemoteDatasource.dart';
+import 'package:movies_clean_arq_flutter/features/number_trivia/data/datasources/models/moviedb/PopularMoviesEntity.dart';
 import 'package:movies_clean_arq_flutter/features/number_trivia/domain/entities/number_trivia.dart';
+import 'package:movies_clean_arq_flutter/features/number_trivia/domain/local/local_datasource.dart';
+import 'package:movies_clean_arq_flutter/features/number_trivia/domain/network/NumberTriviaRemoteDatasource.dart';
 import 'package:movies_clean_arq_flutter/features/number_trivia/domain/repositories/number_trivia_repository.dart';
 
 typedef Future<NumberTrivia> _ConcreteOrRandomChooser();
@@ -21,20 +22,19 @@ class NumberTriviaRepositoryImpl implements NumberTriviaRepository {
     @required this.networkInfo,
   });
   @override
-  Future<Either<Failure, NumberTrivia>> getConcreteNumberTrivia(
-      int number) async {
+  Future<Either<Failure, Result>> getConcreteNumberTrivia(int number) async {
     return await _getTrivia(
         () => remoteDatasource.getConcreteNumberTrivia(number));
   }
 
   @override
-  Future<Either<Failure, NumberTrivia>> getRandomNumberTrivia() async {
+  Future<Either<Failure, Result>> getRandomNumberTrivia() async {
     return await _getTrivia(() {
       return remoteDatasource.getRandomNumberTrivia();
     });
   }
 
-  Future<Either<Failure, NumberTrivia>> _getTrivia(
+  Future<Either<Failure, Result>> _getTrivia(
       _ConcreteOrRandomChooser getConcreteOrRandom) async {
     if (await networkInfo.isConnected) {
       try {
